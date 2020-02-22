@@ -1,0 +1,87 @@
+swagger: "2.0"
+info:
+  description: "This is a simple api registry server"
+  version: "1.0.0"
+  title: "Simple Service Registry"
+  license:
+    name: "MIT"
+host: "localhost:8080"
+basePath: "/"
+schemes:
+- "http"
+- "https"
+paths:
+  /services:
+    get:
+      summary: "Get a list of services known by the registry"
+      description: "This operation retrieves the list of known services from the registry, either as YAML (default) or JSON."
+      produces:
+      - "text/x-yaml"
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Service"
+        500:
+          description: "Server error retrieving the service catalog"
+    post:
+      summary: "Add a new service to the registry"
+      description: "This operation adds the service to the registry.  The service_url is used as the key, so this will overwrite based on service_url."
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Service object that needs to be added to the registry"
+        required: true
+        schema:
+          $ref: "#/definitions/Service"
+      responses:
+        200:
+          description: "successful operation"
+        400:
+          description: "Bad request"
+        500:
+          description: "Server error adding this entry to the service catalog"
+    
+definitions:
+  Service:
+    type: "object"
+    properties:
+      service_url:
+        type: "string"
+        format: "url"
+        description: "The base URL that services are available from"
+      spec_url:
+        type: "string"
+        format: "url"
+        description: "The URL that services specs are available from"
+      healthcheck_url:
+        type: "string"
+        format: "url"
+        description: "The URL health check polling should use (optional)"
+      description:
+        type: "string"
+        description: "The human readable description of the service"
+      health_confirmed:
+        type: "boolean"
+        description: "Boolean indicating whether the last health check was successful (only in responses)"
+      last_checked:
+        type: "string"
+        format: "date-time"
+        description: "The datetime of the last healthcheck (only in responses)"
+      last_available:
+        type: "string"
+        format: "date-time"
+        description: "The datetime of the last successful healthcheck (only in responses)"
+      tags:
+        type: "array"
+        items:
+          type: "string"
+    required:
+      - "service_url"
+      - "spec_url"
+      - "description"

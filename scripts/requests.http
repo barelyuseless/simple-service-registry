@@ -1,0 +1,21 @@
+POST http://localhost:8080/services HTTP/1.1
+Content-Type: application/json
+
+{
+    "service_url": "http://localhost:8080/",
+	"spec_url": "http://localhost:8080/spec",
+	"tags": ["catalog", "api", "registry"],
+	"description": "A simple API registry",
+	"healthcheck_url": "http://localhost:8080/health"
+}
+
+###
+
+GET http://localhost:8080/services HTTP/1.1
+
+###
+
+GET http://localhost:8080/spec HTTP/1.1
+
+### 
+GET http://localhost:8080/health HTTP/1.1

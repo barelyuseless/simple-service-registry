@@ -1,0 +1,7 @@
+address: "0.0.0.0:8080"
+servicestore:
+  type: "boltdb"
+  path: "/data/servicestore.db"
+  polling:
+    use: true
+    interval: "60s"
