@@ -2,7 +2,7 @@
 A simple API service registry in Go.
 
 ## Functional overview
-This is a simple API registry to allow the self-registration and discovery of HTTP APIs.  It accepts POSTs of new service objects (with no authentication, so take that into account when deploying), and then makes a catalogue of these services available for retrieval.
+This is a simple API registry to allow the self-registration and discovery of HTTP APIs.  It accepts POSTs of new service objects (with no authentication, so take that into account when deploying), and then makes a catalog of these services available for retrieval.
 
 There are two storage backends implemented to maintain service state:
  - Map ('map' in the config): uses a basic Go map to maintain a fast, non-persistent in-memory store of services
