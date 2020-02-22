@@ -82,7 +82,11 @@ func main() {
 		log.Warn().Msgf("No bind address specified; defaulting to %s", address)
 	}
 
-	server := internal.StartAPI(address, serviceStore)
+	if viper.GetBool("html") {
+		log.Warn().Msg("HTML output (at /html) has been enabled - this should not be used in untrusted environments")
+	}
+
+	server := internal.StartAPI(address, serviceStore, viper.GetBool("html"))
 
 	log.Info().Msgf("Initialised service api on %s", address)
 

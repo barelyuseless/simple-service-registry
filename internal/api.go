@@ -10,7 +10,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func StartAPI(address string, services ServiceStore) *http.Server {
+func StartAPI(address string, services ServiceStore, html bool) *http.Server {
 	router := httprouter.New()
 
 	router.GET("/health", logLatency(cors(handleGetHealth())))
@@ -18,6 +18,10 @@ func StartAPI(address string, services ServiceStore) *http.Server {
 
 	router.GET("/services", logLatency(cors(handleGetServices(services))))
 	router.POST("/services", logLatency(cors(handlePostServices(services))))
+
+	if html {
+		router.GET("/html", logLatency(cors(handleGetHTML(services))))
+	}
 
 	server := &http.Server{Addr: address, Handler: router}
 
@@ -98,6 +102,27 @@ func handlePostServices(services ServiceStore) httprouter.Handle {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+	}
+}
+
+func handleGetHTML(services ServiceStore) httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+		serviceSlice, err := services.getServices()
+		if err != nil {
+			log.Err(err).Msg("Error retrieving services from serviceStore")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		htmlPage, err := createServiceHTML(serviceSlice)
+		if err != nil {
+			log.Err(err).Msg("Error rendering service HTML")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "text/html")
+		w.Write(htmlPage)
 	}
 }
 
